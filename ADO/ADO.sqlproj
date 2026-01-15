@@ -58,11 +58,16 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Views" />
+    <Folder Include="StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Section.sql" />
     <Build Include="Tables\Student.sql" />
     <Build Include="Views\V_Student.sql" />
+    <Build Include="StoredProcedures\AddStudent.sql" />
+    <Build Include="StoredProcedures\UpdateStudent.sql" />
+    <Build Include="StoredProcedures\DeleteStudent.sql" />
+    <Build Include="StoredProcedures\AddSection.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ADO.publish.xml" />
