@@ -59,6 +59,7 @@
     <Folder Include="Tables" />
     <Folder Include="Views" />
     <Folder Include="StoredProcedures" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Section.sql" />
@@ -71,5 +72,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ADO.publish.xml" />
+    <None Include="Scripts\StudentDatas.sql" />
+    <None Include="Scripts\SectionDatas.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
   </ItemGroup>
 </Project>
