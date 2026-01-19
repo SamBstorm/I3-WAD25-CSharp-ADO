@@ -8,19 +8,41 @@ namespace Demo_Ado_01
         {
             string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Demo-DB;Integrated Security=True";
 
-            using (SqlConnection connection = new SqlConnection())
+            int nbProduct;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.ConnectionString = connectionString;
+                //Plus nécessaire, car la connection string est repris dans le constructeur
+                //connection.ConnectionString = connectionString;
 
-                Console.WriteLine(connection.State);
+                using(SqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT COUNT([ProductId]) FROM [Product]";
+                    connection.Open();
+                    nbProduct = (int)command.ExecuteScalar();
+                    connection.Close();
+                }
+            }
 
-                connection.Open();
+            Console.WriteLine($"Dans ma DB sont enregistrés {nbProduct} produit(s).");
 
-                Console.WriteLine(connection.State);
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT [Name], [Description] FROM [Product]";
+                    connection.Open();
 
-                connection.Close();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Console.WriteLine($"\t- {reader["Name"]}\n\t\t{reader["Description"]}");
+                        }
+                    }
 
-                Console.WriteLine(connection.State);
+                    connection.Close();
+                }
             }
         }
     }
