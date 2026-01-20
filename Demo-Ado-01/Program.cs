@@ -61,7 +61,7 @@ namespace Demo_Ado_01
                 Console.WriteLine($"\t- {prod.Name}\n\t\t{prod.Description} - {prod.CreationDate.ToShortDateString()}");
             }*/
 
-            /* Mode Déconnecté : SqlDataAdapter (Dans des DataTable)*/
+            /* Mode Déconnecté : SqlDataAdapter (Dans des DataTable)
 
             DataTable productTable = new DataTable();
 
@@ -82,7 +82,34 @@ namespace Demo_Ado_01
             foreach (DataRow row in productTable.Rows)
             {
                 Console.WriteLine($"\t- {row["Name"]}\n\t\t{row["Description"]} - {((DateTime)row["CreationDate"]).ToShortDateString()}");
+            }*/
+
+            /* Ordre DML : ExecuteNonQuery */
+            int nbLigneInseree = 0;
+
+            using (SqlConnection connection = new SqlConnection(connectionString) )
+            {
+                using (SqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO [Product] ([Name], [Description]) VALUES ('Casque audio', 'Casque audio haute définition, avec micro intégré')";
+                    try
+                    {
+                        connection.Open();
+                        nbLigneInseree = command.ExecuteNonQuery();
+                    }
+                    catch(SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
             }
+
+            if (nbLigneInseree > 0) Console.WriteLine("Insertion réussie !");
+            else Console.WriteLine("Échec de l'insertion...");
         }
     }
 }
