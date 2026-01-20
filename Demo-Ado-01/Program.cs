@@ -84,7 +84,7 @@ namespace Demo_Ado_01
                 Console.WriteLine($"\t- {row["Name"]}\n\t\t{row["Description"]} - {((DateTime)row["CreationDate"]).ToShortDateString()}");
             }*/
 
-            /* Ordre DML : ExecuteNonQuery */
+            /* Ordre DML : ExecuteNonQuery
             int nbLigneInseree = 0;
 
             using (SqlConnection connection = new SqlConnection(connectionString) )
@@ -109,7 +109,34 @@ namespace Demo_Ado_01
             }
 
             if (nbLigneInseree > 0) Console.WriteLine("Insertion réussie !");
+            else Console.WriteLine("Échec de l'insertion..."); */
+            /* Ordre DML avec OUTPUT : ExecuteScalar/ExecuteReader */
+            int? productId = null;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO [Product] ([Name], [Description]) OUTPUT [inserted].[ProductId] VALUES ('Casque audio Gaming', 'Casque audio haute définition, avec micro intégré, RGB')";
+                    try
+                    {
+                        connection.Open();
+                        productId = (int)command.ExecuteScalar();
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+
+            if (productId is not null) Console.WriteLine($"Insertion réussie ! L'identifiant du produit est {productId}.");
             else Console.WriteLine("Échec de l'insertion...");
+
         }
     }
 }
