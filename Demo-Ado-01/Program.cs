@@ -161,7 +161,7 @@ namespace Demo_Ado_01
                     command.Parameters.Add(pName);
 
                     //Ajout d'un paramètre SQL Server
-                    command.Parameters.AddWithValue("prodDesc", prod.Description);
+                    command.Parameters.AddWithValue("prodDesc", (object)prod.Description ?? DBNull.Value);
 
                     try
                     {
