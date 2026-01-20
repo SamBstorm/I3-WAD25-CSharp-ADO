@@ -110,7 +110,7 @@ namespace Demo_Ado_01
 
             if (nbLigneInseree > 0) Console.WriteLine("Insertion réussie !");
             else Console.WriteLine("Échec de l'insertion..."); */
-            /* Ordre DML avec OUTPUT : ExecuteScalar/ExecuteReader */
+            /* Ordre DML avec OUTPUT : ExecuteScalar/ExecuteReader 
             int? productId = null;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -136,7 +136,56 @@ namespace Demo_Ado_01
 
             if (productId is not null) Console.WriteLine($"Insertion réussie ! L'identifiant du produit est {productId}.");
             else Console.WriteLine("Échec de l'insertion...");
+            */
 
+            /* Injection SQL : Requête paramètrée (SqlParameter) */
+
+            Product prod = new Product()
+            {
+                Name = "Barre de son Gaming",
+                Description = "Barre de son 5.1 avec Subwoofer intégré, RGB"
+            };
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO [Product] ([Name], [Description]) OUTPUT [inserted].[ProductId], [inserted].[CreationDate] VALUES (@prodName, @prodDesc)";
+
+                    //Ajout d'un paramètre classique (pour tous les types de base de données)
+                    SqlParameter pName = new SqlParameter() {
+                        ParameterName = "prodName",
+                        Value = prod.Name
+                    };
+
+                    command.Parameters.Add(pName);
+
+                    //Ajout d'un paramètre SQL Server
+                    command.Parameters.AddWithValue("prodDesc", prod.Description);
+
+                    try
+                    {
+                        connection.Open();
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                prod.ProductId = (int)reader[nameof(Product.ProductId)];
+                                prod.CreationDate = (DateTime)reader[nameof(Product.CreationDate)];
+                            }
+                        }
+                    }
+                    catch(SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+            Console.WriteLine($"{prod.Name} ({prod.ProductId})\n{prod.Description}\n{prod.CreationDate}");
         }
     }
 }
